@@ -12,16 +12,34 @@
 
 <body>
     <div id="app">
+        <div class="cart"> Cart: {{ cart }}</div>
+        <div class="product-display"></div>
         <div class="product-display">
             <div class="product-container">
                 <div class="product-image">
                     <img :src="image" alt="img-product">
                 </div>
                 <div class="product-info">
-                    <h1>{{product_title}}</h1>
+                    <h1>{{product_title + " " + brand }}</h1>
                 <p v-if="inStock >=10">In Stock</p>
                 <p v-else-if="inStock <10 && inStock >1">Almost of out</p>
                 <p v-else>Out of stock</p>
+                <ul>
+                    <li v-for="detail in details">
+                        {{detail}}
+                    </li>
+                </ul>
+                <div v-for="variant in variants"
+                    :key="variant.id"
+                    @mouseover="changeImage(variant.image)"
+                    class="color-circle"
+                    :style="{ backgroundColor: variant.color }">
+                </div>
+                <button 
+                class="button" 
+                :class = "{ disabledButton : inStock < 1}"
+                @click="addToCart"
+                :disabled="inStock < 1"> Add to Cart</button>
                 </div>
             </div>
         </div>
@@ -33,11 +51,27 @@
 
         createApp({
             setup() {
-                
+                const cart = ref(0)
+                const addToCart = () =>{ 
+                cart.value +=1
+            }
+
+            const image = ref ("assets/images/t-shirt-blue.png");
+            const changeImage = (variantImage) => {
+                image.value = variantImage
+            }
                 return {
                     product_title: ref('T-Shirt'),
-                    image: ref ("assets/images/t-shirt-blue.png"),
-                    inStock: ref(9)
+                    brand: 'Marconyu',
+                    image,
+                    inStock: ref(9),
+                    details:['50% Cotton', '30% Polyester', '20% Woll'],
+                    variants: [{id:1, color:'blue', image:"assets/images/t-shirt-blue.png"}, 
+                    {id:2, color: 'green', image:"assets/images/t-shirt-green.png" }],
+                    cart,
+                    addToCart,
+                    changeImage
+
 
                 }
             }
